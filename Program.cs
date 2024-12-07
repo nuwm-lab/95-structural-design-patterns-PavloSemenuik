@@ -1,18 +1,49 @@
 ﻿using System;
 
-namespace LabWork
+interface ITextFormatter
 {
-    // Даний проект є шаблоном для виконання лабораторних робіт
-    // з курсу "Об'єктно-орієнтоване програмування та патерни проектування"
-    // Необхідно змінювати і дописувати код лише в цьому проекті
-    // Відео-інструкції щодо роботи з github можна переглянути 
-    // за посиланням https://www.youtube.com/@ViktorZhukovskyy/videos 
-    class Program
+    string Format(string text);
+}
+
+class PlainTextFormatter : ITextFormatter
+{
+    public string Format(string text) => text;
+}
+
+class BoldTextDecorator : ITextFormatter
+{
+    private readonly ITextFormatter _formatter;
+
+    public BoldTextDecorator(ITextFormatter formatter)
     {
-        static void Main(string[] args)
-        {
-            
-            Console.WriteLine("Hello World!");
-        }
+        _formatter = formatter;
+    }
+
+    public string Format(string text) => $"**{_formatter.Format(text)}**";
+}
+
+class ItalicTextDecorator : ITextFormatter
+{
+    private readonly ITextFormatter _formatter;
+
+    public ItalicTextDecorator(ITextFormatter formatter)
+    {
+        _formatter = formatter;
+    }
+
+    public string Format(string text) => $"*{_formatter.Format(text)}*";
+}
+
+// Приклад використання
+class Program
+{
+    static void Main(string[] args)
+    {
+        ITextFormatter plainText = new PlainTextFormatter();
+        ITextFormatter boldText = new BoldTextDecorator(plainText);
+        ITextFormatter italicText = new ItalicTextDecorator(boldText);
+
+        string result = italicText.Format("Hello, Markdown!");
+        Console.WriteLine(result);
     }
 }
